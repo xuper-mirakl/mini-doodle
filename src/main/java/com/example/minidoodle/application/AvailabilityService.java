@@ -27,7 +27,7 @@ public class AvailabilityService {
       return new AvailabilityResult(from, to, List.of(), List.of());
     }
 
-    // Fetch all slots for all users in one DB query (then split in-memory)
+    // Fetch all slots for all users in one DB query
     List<TimeSlotEntity> all = slots.findAllUsersInRange(userIds, from, to);
 
     Map<UUID, List<TimeSlotEntity>> byUser = all.stream()
@@ -52,7 +52,7 @@ public class AvailabilityService {
 
       List<Interval> free = subtract(available, busy);
 
-      // Domain "Calendar" snapshot (domain-only concept)
+      // Domain "Calendar" snapshot
       @SuppressWarnings("unused")
       Calendar.Snapshot snapshot = new Calendar.Snapshot(userId, from, to, available, busy, free);
 

@@ -4,10 +4,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * "Calendar" exists ONLY in the domain. It is not exposed as an API resource
- * and does not appear in table names or endpoint paths.
- */
 public final class Calendar {
   private final UUID ownerId;
 
