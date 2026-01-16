@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -174,38 +175,23 @@ class MeetingSchedulingIT {
   // --------------------------------------------------
 
   @Test
-  void organizerCannotDoubleBookOverlappingSlots() {
+  void cannotCreateOverlappingSlots_forSameUser() {
     var alice = users.create("alice5@test.com", "Alice");
 
-    var slot1 = slots.create(
+    slots.create(
         alice.getId(),
         BASE,
         Duration.ofMinutes(60),
         SlotStatus.AVAILABLE
     );
 
-    meetings.schedule(
-        alice.getId(),
-        slot1.getId(),
-        "M1",
-        "First",
-        List.of()
-    );
-
-    var overlappingSlot = slots.create(
-        alice.getId(),
-        BASE.plus(Duration.ofMinutes(15)),
-        Duration.ofMinutes(30),
-        SlotStatus.AVAILABLE
-    );
-
-    assertThrows(RuntimeException.class, () ->
-        meetings.schedule(
+    // Overlapping slot should be rejected by DB exclusion constraint
+    assertThrows(DataIntegrityViolationException.class, () ->
+        slots.create(
             alice.getId(),
-            overlappingSlot.getId(),
-            "M2",
-            "Overlap",
-            List.of()
+            BASE.plus(Duration.ofMinutes(15)),
+            Duration.ofMinutes(30),
+            SlotStatus.AVAILABLE
         )
     );
   }

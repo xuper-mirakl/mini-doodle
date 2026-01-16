@@ -50,3 +50,17 @@ CREATE TABLE IF NOT EXISTS time_slots (
 CREATE INDEX IF NOT EXISTS idx_time_slots_user_start ON time_slots (user_id, start_ts);
 CREATE INDEX IF NOT EXISTS idx_time_slots_user_status_start ON time_slots (user_id, status, start_ts);
 CREATE INDEX IF NOT EXISTS idx_time_slots_meeting ON time_slots (meeting_id);
+
+-- No overlaps per user among slots
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'time_slots_no_overlap') THEN
+    ALTER TABLE time_slots
+      ADD CONSTRAINT time_slots_no_overlap
+      EXCLUDE USING gist (
+        user_id WITH =,
+        tstzrange(start_ts, end_ts, '[)') WITH &&
+      );
+  END IF;
+END;
+$$;
