@@ -1,0 +1,42 @@
+# === Java / Maven / Gradle ===
+target/
+build/
+out/
+*.class
+
+# === IDEs ===
+.idea/
+*.iml
+.vscode/
+.eclipse/
+.project
+.classpath
+.settings/
+
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === Logs ===
+logs/
+*.log
+
+# === Environment ===
+.env
+.env.local
+.env.*
+
+# === Docker ===
+docker-data/
+**/docker-data/
+
+# === Testcontainers ===
+testcontainers.properties
+
+# === Coverage ===
+coverage/
+jacoco.exec
+
+# === Temporary files ===
+*.swp
+*.tmp
